@@ -1,0 +1,208 @@
+<nav>
+  <strong>Loan Management &mdash; Admin</strong>
+  <span class="spacer"></span>
+  <a routerLink="/profile">Profile</a>
+  <a routerLink="/change-password">Change Password</a>
+  <button (click)="logout()">Logout</button>
+</nav>
+
+<div class="container">
+  <div class="tabs">
+    <button [class.active]="tab==='users'" (click)="setTab('users')">Pending / All Users</button>
+    <button [class.active]="tab==='loans'" (click)="setTab('loans')">Loan Requests</button>
+    <button [class.active]="tab==='bgverify'" (click)="setTab('bgverify')">Background Verifications</button>
+    <button [class.active]="tab==='loanverify'" (click)="setTab('loanverify')">Loan Verifications</button>
+    <button [class.active]="tab==='questions'" (click)="setTab('questions')">Feedback Questions</button>
+    <button [class.active]="tab==='feedback'" (click)="setTab('feedback')">Customer Feedback</button>
+    <button [class.active]="tab==='help'" (click)="setTab('help')">Help Reports</button>
+  </div>
+
+  <p class="success" *ngIf="message">{{ message }}</p>
+
+  <!-- USERS -->
+  <div class="card" *ngIf="tab==='users'">
+    <h3>Users</h3>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users">
+          <td>{{ u.userId }}</td>
+          <td>{{ u.userName }}</td>
+          <td>{{ u.role }}</td>
+          <td><span class="badge" [ngClass]="u.status">{{ u.status }}</span></td>
+          <td>
+            <button *ngIf="u.status !== 'Approved'" (click)="approveUser(u)">Approve</button>
+            <button class="danger" *ngIf="u.status !== 'Rejected'" (click)="rejectUser(u)">Reject</button>
+            <button class="secondary" (click)="deleteUser(u)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LOAN REQUESTS -->
+  <div class="card" *ngIf="tab==='loans'">
+    <h3>Loan Requests</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Customer</th><th>Type</th><th>Amount</th><th>Period</th>
+          <th>Status</th><th>Assign Officer</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let loan of loanRequests">
+          <td>{{ loan.loanRequestId }}</td>
+          <td>{{ loan.customerId }}</td>
+          <td>{{ loan.loanType }}</td>
+          <td>{{ loan.loanAmount | number }}</td>
+          <td>{{ loan.loanPeriod }} mo</td>
+          <td><span class="badge" [ngClass]="loan.status">{{ loan.status }}</span></td>
+          <td>
+            <select [(ngModel)]="selectedOfficerByLoan[loan.loanRequestId]">
+              <option [ngValue]="null">Select officer</option>
+              <option *ngFor="let o of officers" [ngValue]="o.officerId">{{ o.officerName }}</option>
+            </select>
+            <button (click)="assignVerification(loan)">Assign</button>
+          </td>
+          <td>
+            <button (click)="approveLoan(loan)">Approve</button>
+            <button class="danger" (click)="rejectLoan(loan)">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BACKGROUND VERIFICATIONS -->
+  <div class="card" *ngIf="tab==='bgverify'">
+    <h3>Background Verifications</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Loan Req.</th><th>Officer</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let bv of backgroundVerifications">
+          <td>{{ bv.verificationId }}</td>
+          <td>{{ bv.loanRequestId }}</td>
+          <td>{{ bv.officerId }}</td>
+          <td><span class="badge" [ngClass]="bv.status">{{ bv.status }}</span></td>
+          <td><input [(ngModel)]="remarksByBgId[bv.verificationId]" [placeholder]="bv.remarks || 'Remarks'"></td>
+          <td>
+            <select [(ngModel)]="statusByBgId[bv.verificationId]">
+              <option value="Pending">Pending</option>
+              <option value="Verified">Verified</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <button (click)="updateBackgroundVerification(bv)">Save</button>
+            <button class="danger" (click)="deleteBackgroundVerification(bv)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="!backgroundVerifications.length"><td colspan="6">No background verifications yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LOAN VERIFICATIONS -->
+  <div class="card" *ngIf="tab==='loanverify'">
+    <h3>Loan Verifications</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Loan Req.</th><th>Officer</th><th>Result</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let lv of loanVerifications">
+          <td>{{ lv.loanVerificationId }}</td>
+          <td>{{ lv.loanRequestId }}</td>
+          <td>{{ lv.officerId }}</td>
+          <td><input [(ngModel)]="resultByLvId[lv.loanVerificationId]" [placeholder]="lv.verificationResult || 'Result notes'"></td>
+          <td>
+            <select [(ngModel)]="statusByLvId[lv.loanVerificationId]">
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </td>
+          <td><input [(ngModel)]="remarksByLvId[lv.loanVerificationId]" [placeholder]="lv.remarks || 'Remarks'"></td>
+          <td>
+            <button (click)="updateLoanVerification(lv)">Save</button>
+            <button class="danger" (click)="deleteLoanVerification(lv)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="!loanVerifications.length"><td colspan="7">No loan verifications yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FEEDBACK QUESTIONS -->
+  <div class="card" *ngIf="tab==='questions'">
+    <h3>Feedback Questions</h3>
+    <form (ngSubmit)="addQuestion()" style="flex-direction:row; max-width:none;">
+      <input [(ngModel)]="newQuestionText" name="newQuestionText" placeholder="New question text" style="flex:1;">
+      <button type="submit">Add</button>
+    </form>
+    <table>
+      <thead><tr><th>ID</th><th>Question</th><th>Active</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let q of questions">
+          <td>{{ q.questionId }}</td>
+          <td>
+            <span *ngIf="editingQuestionId !== q.questionId">{{ q.question }}</span>
+            <input *ngIf="editingQuestionId === q.questionId" [(ngModel)]="editingQuestionText" [name]="'edit'+q.questionId">
+          </td>
+          <td>{{ q.isActive ? 'Yes' : 'No' }}</td>
+          <td>
+            <ng-container *ngIf="editingQuestionId === q.questionId; else viewActions">
+              <button (click)="saveEditQuestion(q)">Save</button>
+              <button class="secondary" (click)="cancelEditQuestion()">Cancel</button>
+            </ng-container>
+            <ng-template #viewActions>
+              <button (click)="startEditQuestion(q)">Edit</button>
+              <button (click)="toggleQuestion(q)">{{ q.isActive ? 'Deactivate' : 'Activate' }}</button>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CUSTOMER FEEDBACK -->
+  <div class="card" *ngIf="tab==='feedback'">
+    <h3>Customer Feedback</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Customer</th><th>Question</th><th>Answer</th><th>Date</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let f of feedbacks">
+          <td>{{ f.feedbackId }}</td>
+          <td>{{ f.customerId }}</td>
+          <td>{{ questionText(f.questionId) }}</td>
+          <td>{{ f.answer }}</td>
+          <td>{{ f.feedbackDate | date:'short' }}</td>
+        </tr>
+        <tr *ngIf="!feedbacks.length"><td colspan="5">No feedback submitted yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HELP REPORTS -->
+  <div class="card" *ngIf="tab==='help'">
+    <h3>Help Reports</h3>
+    <table>
+      <thead><tr><th>ID</th><th>User</th><th>Subject</th><th>Description</th><th>Status</th><th>Reply</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let r of helpReports">
+          <td>{{ r.helpReportId }}</td>
+          <td>{{ r.userId }}</td>
+          <td>{{ r.subject }}</td>
+          <td>{{ r.description }}</td>
+          <td><span class="badge" [ngClass]="r.status">{{ r.status }}</span></td>
+          <td>
+            <div *ngIf="r.status === 'Open'; else closedReply">
+              <input [(ngModel)]="replyText[r.helpReportId]" placeholder="Reply...">
+              <button (click)="sendReply(r)">Send &amp; Close</button>
+            </div>
+            <ng-template #closedReply>{{ r.reply }}</ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

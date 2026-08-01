@@ -1,0 +1,100 @@
+<nav>
+  <strong>Loan Management &mdash; Loan Officer</strong>
+  <span class="spacer"></span>
+  <a routerLink="/profile">Profile</a>
+  <a routerLink="/change-password">Change Password</a>
+  <button (click)="logout()">Logout</button>
+</nav>
+
+<div class="container">
+  <div class="card" *ngIf="officer">
+    <h3>Welcome, {{ officer.officerName }}</h3>
+    <p>Employee Code: {{ officer.employeeCode }}</p>
+  </div>
+
+  <div class="tabs">
+    <button [class.active]="tab==='background'" (click)="setTab('background')">Background Verifications</button>
+    <button [class.active]="tab==='loanverify'" (click)="setTab('loanverify')">Loan Verifications</button>
+    <button [class.active]="tab==='help'" (click)="setTab('help')">Help / Support</button>
+  </div>
+
+  <p class="success" *ngIf="message">{{ message }}</p>
+
+  <!-- BACKGROUND VERIFICATIONS -->
+  <div class="card" *ngIf="tab==='background'">
+    <h3>Assigned Background Verifications</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Loan Req.</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let bv of backgroundVerifications">
+          <td>{{ bv.verificationId }}</td>
+          <td>{{ bv.loanRequestId }}</td>
+          <td><span class="badge" [ngClass]="bv.status">{{ bv.status }}</span></td>
+          <td>
+            <input [(ngModel)]="remarksByBgId[bv.verificationId]" [placeholder]="bv.remarks || 'Remarks'">
+          </td>
+          <td>
+            <select [(ngModel)]="statusByBgId[bv.verificationId]">
+              <option value="Pending">Pending</option>
+              <option value="Verified">Verified</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <button (click)="updateBackground(bv)">Save</button>
+          </td>
+        </tr>
+        <tr *ngIf="!backgroundVerifications.length"><td colspan="5">No verifications assigned.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LOAN VERIFICATIONS -->
+  <div class="card" *ngIf="tab==='loanverify'">
+    <h3>Assigned Loan Verifications</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Loan Req.</th><th>Result</th><th>Status</th><th>Remarks</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let lv of loanVerifications">
+          <td>{{ lv.loanVerificationId }}</td>
+          <td>{{ lv.loanRequestId }}</td>
+          <td><input [(ngModel)]="resultByLvId[lv.loanVerificationId]" [placeholder]="lv.verificationResult || 'Result notes'"></td>
+          <td>
+            <select [(ngModel)]="statusByLvId[lv.loanVerificationId]">
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </td>
+          <td><input [(ngModel)]="remarksByLvId[lv.loanVerificationId]" [placeholder]="lv.remarks || 'Remarks'"></td>
+          <td><button (click)="updateLoanVerification(lv)">Save</button></td>
+        </tr>
+        <tr *ngIf="!loanVerifications.length"><td colspan="6">No verifications assigned.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- HELP -->
+  <div class="card" *ngIf="tab==='help'">
+    <h3>Raise a Help Request</h3>
+    <form (ngSubmit)="submitHelp()">
+      <label>Subject</label>
+      <input [(ngModel)]="newHelp.subject" name="subject" required>
+      <label>Description</label>
+      <textarea [(ngModel)]="newHelp.description" name="description"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+
+    <h3>My Help Requests</h3>
+    <table>
+      <thead><tr><th>Subject</th><th>Description</th><th>Status</th><th>Reply</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let r of helpReports">
+          <td>{{ r.subject }}</td>
+          <td>{{ r.description }}</td>
+          <td><span class="badge" [ngClass]="r.status">{{ r.status }}</span></td>
+          <td>{{ r.reply || '-' }}</td>
+        </tr>
+        <tr *ngIf="!helpReports.length"><td colspan="4">No requests yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

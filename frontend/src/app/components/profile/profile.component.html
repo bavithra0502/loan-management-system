@@ -1,0 +1,77 @@
+<div class="container">
+  <div class="card" style="max-width:480px; margin:40px auto;">
+    <h2>My Profile</h2>
+    <p *ngIf="currentUser">
+      Username: <strong>{{ currentUser.userName }}</strong> &nbsp;|&nbsp;
+      Role: <strong>{{ currentUser.role }}</strong> &nbsp;|&nbsp;
+      Status: <strong>{{ currentUser.status }}</strong>
+    </p>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+    <p class="success" *ngIf="message">{{ message }}</p>
+
+    <!-- CUSTOMER PROFILE -->
+    <form *ngIf="customer" (ngSubmit)="saveCustomer()">
+      <label>Full Name</label>
+      <input [(ngModel)]="customer.customerName" name="customerName">
+
+      <label>Gender</label>
+      <select [(ngModel)]="customer.gender" name="gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label>Phone</label>
+      <input [(ngModel)]="customer.phone" name="phone">
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="customer.email" name="email">
+
+      <label>Address</label>
+      <textarea [(ngModel)]="customer.address" name="address"></textarea>
+
+      <label>Occupation</label>
+      <input [(ngModel)]="customer.occupation" name="occupation">
+
+      <label>Annual Income</label>
+      <input type="number" [(ngModel)]="customer.annualIncome" name="annualIncome">
+
+      <div style="display:flex; gap:8px;">
+        <button type="submit">Save Profile</button>
+        <button type="button" class="secondary" (click)="goBack()">Back</button>
+      </div>
+    </form>
+
+    <!-- LOAN OFFICER PROFILE -->
+    <form *ngIf="officer" (ngSubmit)="saveOfficer()">
+      <label>Full Name</label>
+      <input [(ngModel)]="officer.officerName" name="officerName">
+
+      <label>Phone</label>
+      <input [(ngModel)]="officer.phone" name="phone">
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="officer.email" name="email">
+
+      <label>Address</label>
+      <textarea [(ngModel)]="officer.address" name="address"></textarea>
+
+      <label>Employee Code</label>
+      <input [(ngModel)]="officer.employeeCode" name="employeeCode">
+
+      <div style="display:flex; gap:8px;">
+        <button type="submit">Save Profile</button>
+        <button type="button" class="secondary" (click)="goBack()">Back</button>
+      </div>
+    </form>
+
+    <!-- ADMIN (no separate profile entity) -->
+    <div *ngIf="currentUser?.role === 'Admin'">
+      <p>Admin accounts don't have an extended profile record &mdash; only the
+      account fields shown above. Use "Change Password" from the nav bar to
+      update your credentials.</p>
+      <button type="button" class="secondary" (click)="goBack()">Back</button>
+    </div>
+  </div>
+</div>

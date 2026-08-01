@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="card" style="max-width:620px; margin:80px auto;">
+    <h2>Loan Management System</h2>
+    <p>Sign in to continue</p>
+
+    <form (ngSubmit)="submit()">
+      <div>
+        <label> Username </label>
+        <input type="text" [(ngModel)]="userName" name="userName" required>
+      </div>
+      <div>
+        <label>  Password  </label>
+        <input type="password" [(ngModel)]="password" name="password" required>
+      </div>
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <button type="submit" [disabled]="loading">{{ loading ? 'Signing in...' : 'Login' }}</button>
+    </form>
+
+    <hr>
+    <p>New here?</p>
+    <a routerLink="/register/customer">Register as Customer</a><br>
+    <a routerLink="/register/officer">Register as Loan Officer</a>
+  </div>
+</div>

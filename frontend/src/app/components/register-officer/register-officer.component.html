@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="card" style="max-width:480px; margin:40px auto;">
+    <h2>Loan Officer Registration</h2>
+    <form (ngSubmit)="submit()">
+      <label>Username</label>
+      <input [(ngModel)]="model.userName" name="userName" required>
+
+      <label>Password</label>
+      <input type="password" [(ngModel)]="model.password" name="password" required>
+
+      <label>Full Name</label>
+      <input [(ngModel)]="model.officerName" name="officerName" required>
+
+      <label>Phone</label>
+      <input [(ngModel)]="model.phone" name="phone">
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="model.email" name="email">
+
+      <label>Address</label>
+      <textarea [(ngModel)]="model.address" name="address"></textarea>
+
+      <label>Employee Code</label>
+      <input [(ngModel)]="model.employeeCode" name="employeeCode">
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <p class="success" *ngIf="success">{{ success }}</p>
+      <button type="submit">Register</button>
+    </form>
+    <p><a routerLink="/login">Back to login</a></p>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<nav>
+  <strong>Loan Management &mdash; Customer</strong>
+  <span class="spacer"></span>
+  <a routerLink="/profile">Profile</a>
+  <a routerLink="/change-password">Change Password</a>
+  <button (click)="logout()">Logout</button>
+</nav>
+
+<div class="container">
+  <div class="card" *ngIf="customer">
+    <h3>Welcome, {{ customer.customerName }}</h3>
+    <p>Email: {{ customer.email }} &nbsp;|&nbsp; Phone: {{ customer.phone }}</p>
+  </div>
+
+  <div class="tabs">
+    <button [class.active]="tab==='loans'" (click)="setTab('loans')">My Loans</button>
+    <button [class.active]="tab==='apply'" (click)="setTab('apply')">Apply for Loan</button>
+    <button [class.active]="tab==='feedback'" (click)="setTab('feedback')">Feedback</button>
+    <button [class.active]="tab==='help'" (click)="setTab('help')">Help / Support</button>
+  </div>
+
+  <p class="success" *ngIf="message">{{ message }}</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <!-- MY LOANS -->
+  <div class="card" *ngIf="tab==='loans'">
+    <h3>My Loan Requests</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Type</th><th>Amount</th><th>Period</th><th>Purpose</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let loan of loanRequests">
+          <td>{{ loan.loanRequestId }}</td>
+          <td>{{ loan.loanType }}</td>
+          <td>{{ loan.loanAmount | number }}</td>
+          <td>{{ loan.loanPeriod }} mo</td>
+          <td>{{ loan.purpose }}</td>
+          <td><span class="badge" [ngClass]="loan.status">{{ loan.status }}</span></td>
+        </tr>
+        <tr *ngIf="!loanRequests.length"><td colspan="6">No loan requests yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- APPLY -->
+  <div class="card" *ngIf="tab==='apply'">
+    <h3>Apply for a Loan</h3>
+    <form (ngSubmit)="applyLoan()">
+      <label>Loan Type</label>
+      <select [(ngModel)]="newLoan.loanType" name="loanType">
+        <option value="Home">Home</option>
+        <option value="Car">Car</option>
+        <option value="Education">Education</option>
+        <option value="Personal">Personal</option>
+      </select>
+
+      <label>Loan Amount</label>
+      <input type="number" [(ngModel)]="newLoan.loanAmount" name="loanAmount">
+
+      <label>Loan Period (months)</label>
+      <input type="number" [(ngModel)]="newLoan.loanPeriod" name="loanPeriod">
+
+      <label>Purpose</label>
+      <textarea [(ngModel)]="newLoan.purpose" name="purpose"></textarea>
+
+      <button type="submit">Submit Application</button>
+    </form>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="card" *ngIf="tab==='feedback'">
+    <h3>Feedback</h3>
+    <div *ngFor="let q of questions" style="margin-bottom:12px;">
+      <label>{{ q.question }}</label>
+      <div style="display:flex; gap:8px;">
+        <input [(ngModel)]="feedbackAnswers[q.questionId]" [name]="'q'+q.questionId" style="flex:1;">
+        <button (click)="submitFeedback(q)">Submit</button>
+      </div>
+    </div>
+    <p *ngIf="!questions.length">No feedback questions available right now.</p>
+  </div>
+
+  <!-- HELP -->
+  <div class="card" *ngIf="tab==='help'">
+    <h3>Raise a Help Request</h3>
+    <form (ngSubmit)="submitHelp()">
+      <label>Subject</label>
+      <input [(ngModel)]="newHelp.subject" name="subject" required>
+      <label>Description</label>
+      <textarea [(ngModel)]="newHelp.description" name="description"></textarea>
+      <button type="submit">Submit</button>
+    </form>
+
+    <h3>My Help Requests</h3>
+    <table>
+      <thead><tr><th>Subject</th><th>Description</th><th>Status</th><th>Reply</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let r of helpReports">
+          <td>{{ r.subject }}</td>
+          <td>{{ r.description }}</td>
+          <td><span class="badge" [ngClass]="r.status">{{ r.status }}</span></td>
+          <td>{{ r.reply || '-' }}</td>
+        </tr>
+        <tr *ngIf="!helpReports.length"><td colspan="4">No requests yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="card" style="max-width:480px; margin:40px auto;">
+    <h2>Customer Registration</h2>
+    <form (ngSubmit)="submit()">
+      <label>Username</label>
+      <input [(ngModel)]="model.userName" name="userName" required>
+
+      <label>Password</label>
+      <input type="password" [(ngModel)]="model.password" name="password" required>
+
+      <label>Full Name</label>
+      <input [(ngModel)]="model.customerName" name="customerName" required>
+
+      <label>Gender</label>
+      <select [(ngModel)]="model.gender" name="gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label>Date of Birth</label>
+      <input type="date" [(ngModel)]="model.dob" name="dob">
+
+      <label>Phone</label>
+      <input [(ngModel)]="model.phone" name="phone">
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="model.email" name="email">
+
+      <label>Address</label>
+      <textarea [(ngModel)]="model.address" name="address"></textarea>
+
+      <label>Aadhaar Number</label>
+      <input [(ngModel)]="model.aadhaarNumber" name="aadhaarNumber">
+
+      <label>PAN Number</label>
+      <input [(ngModel)]="model.panNumber" name="panNumber">
+
+      <label>Occupation</label>
+      <input [(ngModel)]="model.occupation" name="occupation">
+
+      <label>Annual Income</label>
+      <input type="number" [(ngModel)]="model.annualIncome" name="annualIncome">
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <p class="success" *ngIf="success">{{ success }}</p>
+      <button type="submit">Register</button>
+    </form>
+    <p><a routerLink="/login">Back to login</a></p>
+  </div>
+</div>
